@@ -3,9 +3,16 @@ import RealtimeOrderListener from "@/components/RealtimeOrderListener";
 import CompleteOrderButton from "@/components/CompleteOrderButton";
 import { OrderStatus } from "@prisma/client";
 import Link from "next/link";
+import { getMyProfile } from "@/actions/auth";
+import { redirect } from "next/navigation";
 
 // Halaman ini adalah Server Component, jadi kita bisa langsung memanggil database
 export default async function KitchenPage({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
+
+    const profile = await getMyProfile()
+    if (!profile || (profile.role !== 'KITCHEN' && profile.role !== 'ADMIN')) {
+        redirect('/')
+    }
 
     // Karena di Next.js 15 searchParams adalah Promise, kita harus await
     const resolvedParams = await searchParams;

@@ -60,9 +60,9 @@ Pendekatan tetap menggunakan "Micro-Steps / Step-by-Step".
 - [x] Langkah 1: Memperbarui logika Checkout (Menggabungkan alur Tamu dan Pengguna Terdaftar).
 - [x] Langkah 2: Sistem Diskon Otomatis untuk Member Terdaftar.
 
-### [ ] DAY 7 — Authorization (Role-Based Access)
-- [ ] *[Sedang Berjalan]* Langkah 1: Menambahkan sistem `Role` (Customer, Kitchen, Admin).
-- [ ] Langkah 2: Mengamankan halaman `/kitchen` (Hanya akun staf yang bisa mengakses layar dapur).
+### [x] DAY 7 — Authorization (Role-Based Access)
+- [x] Langkah 1: Menambahkan sistem `Role` (Customer, Kitchen, Admin).
+- [x] Langkah 2: Mengamankan halaman `/kitchen` (Hanya akun staf yang bisa mengakses layar dapur).
 
 ### [ ] DAY 8 — Payment Gateway Integration (Midtrans)
 - [ ] Langkah 1: Konfigurasi Server Key & Client Key Midtrans.
