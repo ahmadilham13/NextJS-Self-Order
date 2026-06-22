@@ -1,6 +1,7 @@
 import Image from "next/image";
 import prisma from "@/lib/prisma"
 import AddToCartButton from "@/components/AddToCartButton"
+import UserHeader from "@/components/UserHeader"
 
 export default async function Home() {
 
@@ -10,6 +11,7 @@ export default async function Home() {
   
   return (
     <main className="min-h-screen bg=slate-50 pb-32">
+      <UserHeader />
       {/* Hero Section / Spanduk Atas */}
       <div className="bg-linear-to-r from-blue-600 to-indigo-700 text-white py-16 px-8 rounded-b-[3rem] shadow-lg mb-12">
         <div className="max-w-5xl mx-auto text-center">

@@ -43,5 +43,29 @@ File ini digunakan sebagai pengingat (memori) bagi AI Agent mengenai konteks, at
 - [x] Halaman Kitchen Display.
 - [x] Sinkronisasi pesanan masuk secara realtime tanpa refresh.
 
-## 🎉 SELAMAT! PROYEK SELESAI! 🎉
-Semua target silabus telah berhasil diselesaikan dengan luar biasa!
+## 🎉 SELAMAT! FASE 1 SELESAI! 🎉
+Semua target silabus Fase 1 telah berhasil diselesaikan dengan luar biasa!
+
+---
+
+## 🚀 FASE 2: FITUR ENTERPRISE & MONETISASI
+Pendekatan tetap menggunakan "Micro-Steps / Step-by-Step".
+
+### [ ] DAY 5 — Authentication & User Management
+- [x] Langkah 1: Setup Supabase Auth & Pembaruan Skema Database (Tabel `User` dan relasinya ke `Order`).
+- [x] Langkah 2: Membuat Halaman Register & Login.
+- [x] Langkah 3: Mengelola Sesi Pengguna di Frontend (Menampilkan Status Login).
+
+### [ ] DAY 6 — Guest Mode & Member Benefits
+- [ ] *[Sedang Berjalan]* Langkah 1: Memperbarui logika Checkout (Menggabungkan alur Tamu dan Pengguna Terdaftar).
+- [ ] Langkah 2: Sistem Diskon Otomatis untuk Member Terdaftar.
+
+### [ ] DAY 7 — Authorization (Role-Based Access)
+- [ ] Langkah 1: Menambahkan sistem `Role` (Customer, Kitchen, Admin).
+- [ ] Langkah 2: Mengamankan halaman `/kitchen` (Hanya akun staf yang bisa mengakses layar dapur).
+
+### [ ] DAY 8 — Payment Gateway Integration (Midtrans)
+- [ ] Langkah 1: Konfigurasi Server Key & Client Key Midtrans.
+- [ ] Langkah 2: Membuat API Route untuk menerbitkan *Snap Token* pembayaran.
+- [ ] Langkah 3: Menampilkan Pop-Up Pembayaran saat Checkout.
+- [ ] Langkah 4: Menangani *Webhook* (Notifikasi otomatis dari Bank/E-Wallet untuk merubah status menjadi 'Lunas').

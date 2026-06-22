@@ -10,7 +10,26 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-// Ini adalah tabel Menu kita
+
+model User {
+  // ID ini sengaja tidak pakai default(cuid()), karena kita akan
+  // menggunakan ID resmi yang dihasilkan oleh sistem supabase Auth
+  id          String  @id
+  email       String  @unique
+  name        String?
+  role        UserRole  @default(CUSTOMER)  // Peran default adalah pelanggan biaa
+  createdAt   DateTime  @default(now())
+
+  // Relasi: Satu user bisa memiliki riwayat banyak pesanan
+  orders      Order[]
+}
+
+enum UserRole {
+  CUSTOMER
+  KITCHEN
+  ADMIN
+}
+
 model Menu {
   id          String   @id @default(cuid())
   name        String
@@ -31,6 +50,10 @@ model Order {
   status        OrderStatus @default(PENDING) // Status Awal
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  // RELASI BARU: Boleh kosong (?) jika yang memesan adalah Tamu (Guest)
+  userId        String?     
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // Relasi: Satu struk pesanan memiliki banyak item makanan
   items       OrderItem[]
