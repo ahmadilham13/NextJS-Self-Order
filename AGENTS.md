@@ -72,5 +72,27 @@ Pendekatan tetap menggunakan "Micro-Steps / Step-by-Step".
 
 ---
 
-## 🏆 SELAMAT! FASE 2 SELESAI & PROYEK TAMAT! 🏆
-Kamu telah berhasil membangun Sistem Self-Order F&B kelas Enterprise dengan fitur Autentikasi, Diskon Member, Keamanan RBAC, dan Integrasi Pembayaran nyata!
+## 🌟 FASE 3: CUSTOMER EXPERIENCE
+### [x] DAY 9 — Transaction History & Digital Receipt
+- [x] Langkah 1: Membangun halaman riwayat pesanan khusus pelanggan yang *login*.
+- [x] Langkah 2: Menampilkan status pelunasan berdasarkan *webhook* Midtrans.
+- [x] Langkah 3: Membuat struk digital (*print-ready*) menyerupai kertas kasir termal.
+
+---
+
+## 💼 FASE 4: BACKOFFICE & ADMIN DASHBOARD
+Fitur manajerial tingkat lanjut untuk mengontrol keseluruhan sistem dari balik layar.
+
+### [x] DAY 10 — Database Enhancement & Audit Log
+- [x] Langkah 1: Menambahkan tabel `AuditLog` di Prisma Schema.
+- [x] Langkah 2: Memperbarui tabel `Menu` dengan menambahkan kolom `isAvailable` (Stok Tersedia).
+- [x] Langkah 3: Menyiapkan *Layout* khusus `/admin` yang dilindungi dengan *Role Based Access Control* (hanya Admin).
+
+### [ ] DAY 11 — Core Management (CRUD)
+- [ ] Langkah 1: **Menu Management** (Menambah, Mengedit harga/ketersediaan, Menghapus menu).
+- [ ] Langkah 2: **User Management** (Melihat daftar pengguna, mengubah *role* menjadi Admin/Kitchen, dll).
+
+### [ ] DAY 12 — Analytics & Recon (Rekonsiliasi)
+- [ ] Langkah 1: **Dashboard Analytic** (Grafik pendapatan, menu paling laris, total pesanan).
+- [ ] Langkah 2: **Halaman Rekonsiliasi** (Mencocokkan jumlah uang masuk di Midtrans dengan catatan database kita).
+- [ ] Langkah 3: **Halaman Audit Log** (Memantau siapa melakukan apa: misal "Admin B mengubah harga Ayam Goreng").

@@ -22,6 +22,9 @@ model User {
 
   // Relasi: Satu user bisa memiliki riwayat banyak pesanan
   orders      Order[]
+  
+  // Relasi: Riwayat tindakan (log) apa saja yang pernah dilakukan user ini
+  auditLogs   AuditLog[]
 }
 
 enum UserRole {
@@ -36,6 +39,7 @@ model Menu {
   description String?
   price       Int
   imageUrl    String?
+  isAvailable Boolean  @default(true) // Penanda apakah menu ini tersedia/habis
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -81,4 +85,17 @@ enum OrderStatus {
   READY         // Siap diantar/diambil
   CANCELLED     // Batal dipesan
   COMPLETED     // Selesai
+}
+
+// Tabel baru untuk melacak semua aktivitas Admin & Staf Dapur
+model AuditLog {
+  id          String   @id @default(cuid())
+  action      String   // Jenis tindakan (contoh: "CREATE_MENU", "UPDATE_PRICE")
+  details     String   // Penjelasan lebih rinci tentang apa yang diubah
+  
+  // Siapa pelakunya?
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  createdAt   DateTime @default(now())
 }
