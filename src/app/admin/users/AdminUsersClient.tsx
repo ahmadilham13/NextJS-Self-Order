@@ -14,6 +14,12 @@ type User = {
 export default function AdminUsersClient({ initialUsers }: { initialUsers: User[] }) {
     const [loadingId, setLoadingId] = useState<string | null>(null)
 
+    // Fitur Pagination
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+    const totalPages = Math.ceil(initialUsers.length / itemsPerPage)
+    const currentUsers = initialUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
     // Fungsi untuk mengganti jabatan (Role)
     const handleRoleChange = async (userId: string, newRole: 'ADMIN' | 'KITCHEN' | 'CUSTOMER') => {
         if (!confirm(`Apakah kamu yakin ingin mengubah jabatan akun ini menjadi ${newRole}?`)) {
@@ -47,7 +53,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: User[
                         </tr>
                     </thead>
                     <tbody>
-                        {initialUsers.map(user => (
+                        {currentUsers.map(user => (
                             <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors text-black">
                                 <td className="p-4 flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center">
@@ -82,6 +88,29 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: User[
                         ))}
                     </tbody>
                 </table>
+                
+                {/* Kontrol Pagination */}
+                {totalPages > 1 && (
+                    <div className="p-4 border-t border-gray-200 flex justify-between items-center bg-gray-50">
+                        <p className="text-sm text-gray-500 font-bold">Halaman {currentPage} dari {totalPages}</p>
+                        <div className="flex gap-2">
+                            <button 
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold disabled:opacity-50 hover:bg-gray-100"
+                            >
+                                ← Sebelumnya
+                            </button>
+                            <button 
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-bold disabled:opacity-50 hover:bg-gray-100"
+                            >
+                                Selanjutnya →
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )
