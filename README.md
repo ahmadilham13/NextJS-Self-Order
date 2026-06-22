@@ -1,59 +1,99 @@
-# 🍔 Smart Resto POS & Self-Order System
+# 🍔 Self-Order F&B Apps with Realtime Kitchen Display
 
-A modern, full-stack Food & Beverage Self-Order System built with Next.js 15. Features a customer-facing kiosk interface and a real-time kitchen display system (KDS) synchronized via WebSockets.
+Sistem pemesanan mandiri (Self-Order) restoran kelas *Enterprise* yang dirancang untuk memberikan pengalaman tanpa hambatan bagi pelanggan, dapur (kitchen), dan manajemen (admin). Dibangun menggunakan ekosistem Next.js 15 terbaru.
 
 ## ✨ Fitur Utama
-- **Menu Digital & Keranjang**: Tampilan beranda yang interaktif bagi pelanggan untuk memilih makanan dan memasukkannya ke keranjang (State Management dengan React Context).
-- **Sistem Checkout**: Pengisian data pelanggan dan perhitungan total harga secara otomatis.
-- **Realtime Kitchen Display**: Layar khusus dapur yang akan memunculkan pesanan baru seketika (tanpa perlu *refresh*) menggunakan Supabase WebSockets.
-- **Alur Status Pesanan**: Koki dapat mengubah status pesanan dari `PENDING` -> `COOKING` -> `READY` -> `COMPLETED`.
-- **Filter Pintar**: Navigasi di layar dapur untuk menyaring pesanan berdasarkan statusnya saat ini.
 
-## 🛠️ Teknologi yang Digunakan
-- **Framework**: Next.js 15 (App Router, Server Actions)
-- **Styling**: Tailwind CSS v4
-- **Database**: Supabase (PostgreSQL)
-- **ORM**: Prisma 7
-- **Realtime Sync**: `@supabase/supabase-js`
+### 🧑‍💼 Customer Experience (Frontend)
+- **Katalog Menu Dinamis:** Menampilkan ketersediaan stok menu secara *realtime* (lengkap dengan overlay "Habis" jika stok kosong).
+- **Sistem Keranjang Belanja:** *State Management* menggunakan React Context API.
+- **Dukungan Guest & Member Mode:** Pelanggan yang *login* akan otomatis mendapatkan diskon khusus (Loyalty Program).
+- **Pembayaran Terintegrasi (Midtrans):** Popup pembayaran otomatis (E-Wallet, Virtual Account, dll) menggunakan Midtrans Snap.
+- **Riwayat Transaksi & Struk Digital:** Bukti bayar otomatis (*print-ready*) bergaya kertas kasir termal.
 
-## 🚀 Cara Menjalankan di Komputer Lokal
+### 👨‍🍳 Kitchen Display System (KDS)
+- **Realtime WebSocket:** Sinkronisasi pesanan masuk secara langsung tanpa perlu *refresh* (menggunakan Supabase Realtime).
+- **Manajemen Status Pesanan:** Dapur bisa mengubah status dari "Memasak" menjadi "Siap Disajikan".
 
-1. Clone repositori ini:
-   ```bash
-   git clone https://github.com/username-kamu/nama-repo.git
-   cd nama-repo
-   ```
+### 👑 Backoffice & Admin Dashboard (RBAC)
+- **Role-Based Access Control:** Keamanan ganda untuk memisahkan akses `CUSTOMER`, `KITCHEN`, dan `ADMIN`.
+- **Analytics Dashboard:** Visualisasi pendapatan kotor, total pesanan sukses, dan bar indikator menu paling laris.
+- **Menu Management (CRUD):** Tambah, edit harga, ubah ketersediaan stok, dan upload gambar menu secara langsung ke **Supabase Storage**. Dilengkapi dengan tabel *pagination*.
+- **User Management:** Panel untuk memantau daftar pengguna dan menaikkan/menurunkan jabatan staf (Admin/Kitchen).
+- **Halaman Rekonsiliasi:** Pencocokan *Order ID* dan jumlah uang masuk antara database internal dengan rekening Midtrans.
+- **Audit Log Terpusat:** Sistem mencatat setiap tindakan perubahan yang dilakukan oleh Admin (Siapa, Kapan, Apa yang diubah).
 
-2. Install semua dependensi:
-   ```bash
-   npm install
-   ```
+---
 
-3. Buat file `.env` di folder utama dan isi dengan konfigurasi database Supabase-mu:
-   ```env
-   DATABASE_URL="postgresql://postgres.[PROYEK_ID]:[PASSWORD]@aws-0-....pooler.supabase.com:6543/postgres"
-   DIRECT_URL="postgresql://postgres.[PROYEK_ID]:[PASSWORD]@aws-0-....pooler.supabase.com:5432/postgres"
-   NEXT_PUBLIC_SUPABASE_URL="https://[PROYEK_ID].supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOi..."
-   ```
+## 🛠️ Tech Stack & Konvensi
 
-4. Sinkronisasi skema database ke Supabase:
-   ```bash
-   npx prisma db push
-   npx prisma generate
-   ```
-   *(Opsional: Jalankan `npx tsx prisma/seed.ts` jika kamu punya script data awal)*
+1. **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+2. **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+3. **Database & Storage:** [Supabase](https://supabase.com/) (PostgreSQL & Object Storage)
+4. **ORM:** [Prisma 7](https://www.prisma.io/) (Menggunakan `@prisma/adapter-pg` untuk koneksi *Pooler*)
+5. **Autentikasi:** Supabase Auth (SSR)
+6. **Payment Gateway:** [Midtrans](https://midtrans.com/) (Snap Token & Webhook Settlement)
 
-5. Jalankan server lokal:
-   ```bash
-   npm run dev
-   ```
-   Buka `http://localhost:3000` untuk layar Pelanggan/Kasir, dan `http://localhost:3000/kitchen` untuk layar Dapur.
+---
 
-6. Jalankan command ini untuk melihat database via Prisma GUI:
-   ```bash
-   npx prisma studio
-   ```
+## 🚀 Panduan Instalasi Lokal
 
-## 🤝 Kontribusi
-Dibuat sebagai proyek pembelajaran mandiri (Micro-Steps Project). Silakan lakukan *fork* dan modifikasi sesukamu!
+### 1. Kloning Repositori
+```bash
+git clone https://github.com/ahmadilham13/NextJS-Self-Order.git
+cd NextJS-Self-Order
+```
+
+### 2. Instalasi Dependensi
+```bash
+npm install
+```
+
+### 3. Konfigurasi Environment Variables (`.env`)
+Buat file `.env` di *root* proyek dan isikan dengan kunci-kunci berikut:
+
+```env
+# Prisma Database
+DATABASE_URL="postgresql://[USER]:[PASSWORD]@[POOLER_URL]:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://[USER]:[PASSWORD]@[DIRECT_URL]:5432/postgres"
+
+# Supabase Auth & Storage
+NEXT_PUBLIC_SUPABASE_URL="https://[PROJECT-ID].supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="ey..."
+
+# Midtrans Payment Gateway
+MIDTRANS_SERVER_KEY="SB-Mid-server-..."
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY="SB-Mid-client-..."
+```
+
+*Catatan: Pastikan kamu telah membuat bucket bernama `menu-images` dengan status **Public** dan menyetel Storage Policy di Supabase untuk mengizinkan operasi Upload.*
+
+### 4. Sinkronisasi Database (Prisma)
+```bash
+# Push skema ke Supabase
+npx prisma db push
+
+# (Opsional) Seeding data dummy
+npx tsx prisma/seed.ts
+```
+
+### 5. Jalankan Server Development
+```bash
+npm run dev
+```
+
+Buka [http://localhost:3000](http://localhost:3000) di browser untuk melihat aplikasi.
+
+---
+
+## 🏗️ Struktur Proyek
+
+- `/src/app/` - Halaman antarmuka pelanggan (Homepage, Login, History).
+- `/src/app/admin/` - Ekosistem Backoffice (Dashboard, Manajemen, Audit, Recon). Dilindungi oleh RBAC.
+- `/src/app/kitchen/` - Ekosistem Dapur (Live Order Display).
+- `/src/actions/` - Logika *Server Actions* untuk manipulasi database, mutasi, dan pengecekan otorisasi.
+- `/src/app/api/webhook/` - *Route handler* untuk menerima notifikasi pelunasan dari Midtrans.
+
+---
+
+*Dibangun dengan dedikasi penuh. Sistem ini dirancang bukan sekadar sebagai aplikasi kasir, melainkan sebagai mesin bisnis yang berjalan otomatis.*
