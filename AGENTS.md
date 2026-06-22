@@ -27,16 +27,16 @@ File ini digunakan sebagai pengingat (memori) bagi AI Agent mengenai konteks, at
 - [x] Seeding Data Dummy (`tsx prisma/seed.ts`)
 - [x] Fetching Menu di Homepage via Server Component
 
-### [ ] DAY 2 — Build Menu & Cart System
-- [ ] *[Sedang Berjalan]* Langkah 1: Setup State Management untuk Cart (React Context).
-- [ ] Langkah 2: Membungkus Aplikasi dengan Provider.
-- [ ] Langkah 3: Menggunakan Cart di Client Component (Membuat Tombol Tambah).
-- [ ] Langkah 4: Membuat UI Keranjang (Floating Cart / Sidebar) & Hitung Subtotal.
+### [x] DAY 2 — Build Menu & Cart System
+- [x] Langkah 1: Setup State Management untuk Cart (React Context).
+- [x] Langkah 2: Membungkus Aplikasi dengan Provider.
+- [x] Langkah 3: Menggunakan Cart di Client Component (Membuat Tombol Tambah).
+- [x] Langkah 4: Membuat UI Keranjang (Floating Cart / Sidebar) & Hitung Subtotal.
 
-### [ ] DAY 3 — Order & Checkout Feature
-- [ ] Skema Database Relasional (`Order` dan `OrderItem`).
-- [ ] Form Customer & Validasi.
-- [ ] API Create Order (Server Actions / Route Handlers).
+### [x] DAY 3 — Order & Checkout Feature
+- [x] Langkah 1: Skema Database Relasional (`Order` dan `OrderItem`).
+- [x] Langkah 2: Form Customer & Validasi.
+- [x] Langkah 3: API Create Order (Server Actions / Route Handlers).
 
 ### [ ] DAY 4 — Live Kitchen Display
 - [ ] Setup Supabase Realtime / WebSockets.

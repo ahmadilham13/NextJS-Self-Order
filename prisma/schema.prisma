@@ -19,4 +19,41 @@ model Menu {
   imageUrl    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relasi: Satu menu bisa ada di banyak daftar pesanan
+  orderItems OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  customerName  String      // Nama pembeli
+  totalAmount   Int         // Total tagihan
+  status        OrderStatus @default(PENDING) // Status Awal
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relasi: Satu struk pesanan memiliki banyak item makanan
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id            String      @id @default(cuid())
+  quantity      Int         // Jumlah porsi
+  price         Int         // Harga saat dibeli (Jaga-jaga jika harga menu naik di masa depan)
+  
+  // Relasi ke table Order (Jika order dihapus, itemnya ikut terhapus otomatis via Cascade)
+  orderId       String
+  order         Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Relasi ke table Menu
+  menuId        String
+  menu          Menu        @relation(fields: [menuId], references: [id])
+}
+
+// Enum (Tipe data khusus) untuk melacak pesanan di Kitchen Display
+enum OrderStatus {
+  PENDING       // Baru masuk
+  COOKING       // Sedang dimasak
+  READY         // Siap diantar/diambil
+  COMPLETED     // Selesai
 }

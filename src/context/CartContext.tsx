@@ -16,6 +16,7 @@ type CartContextType = {
     addToCart: (item: Omit<CartItem, 'quantity'>) => void // Kita modifikasi sedikit agar default quantity = 1
     removeFromCart: (id: string) => void // Fungsi untuk menghapus barang dari keranjang
     subtotal: number // Total harga dari semua barang di keranjang
+    clearCart: () => void
 }
 
 // 3. Membuat React Context
@@ -53,8 +54,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Menghitung total harga secara otomatis (harga * jumlah)
     const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0)
 
+    // Fungsi untuk mengosongkan keranjang
+    const clearCart = () => setItems([])
+
     return (
-        <CartContext.Provider value={{ items, addToCart, removeFromCart, subtotal }}>
+        <CartContext.Provider value={{ items, addToCart, removeFromCart, subtotal, clearCart }}>
             {children}
         </CartContext.Provider>
     )

@@ -1,6 +1,7 @@
 'use client'    // wajib agar UI ini bisa menghitung dan merender secara interaktif
 
 import { useCart } from "@/context/CartContext"
+import Link from "next/link"
 
 export default function FloatingCart() {
     const { items, removeFromCart, subtotal } = useCart()
@@ -48,9 +49,11 @@ export default function FloatingCart() {
                             Rp {subtotal.toLocaleString('id-ID')}
                         </div>
                     </div>
-                    <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all active:scale-95">
+                    <Link 
+                        href="/checkout"
+                        className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all active:scale-95 text-center">
                         Checkout
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>
