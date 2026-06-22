@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { login, signup } from "@/actions/auth"
 import { useSearchParams } from "next/navigation"
 
-export default function AuthPage() {
+function AuthForm() {
     const searchParams = useSearchParams()
     const errorMessage = searchParams.get('error')
     const successMessage = searchParams.get('success')
@@ -13,7 +13,6 @@ export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true)
 
     return (
-        <main className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
             <div className="bg-gray-800 p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-700">
                 
                 <h1 className="text-3xl font-black text-yellow-400 text-center mb-2">
@@ -98,6 +97,15 @@ export default function AuthPage() {
                     </button>
                 </div>
             </div>
+    )
+}
+
+export default function AuthPage() {
+    return (
+        <main className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+            <Suspense fallback={<div className="text-white text-xl font-bold">Memuat...</div>}>
+                <AuthForm />
+            </Suspense>
         </main>
     )
 }
