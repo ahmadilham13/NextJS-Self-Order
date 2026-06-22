@@ -1,6 +1,7 @@
 'use server' // Wajib! Ini menandakan kode ini berjalan secara aman di server
 
 import prisma from "@/lib/prisma"
+import midtransClient from "midtrans-client"
 import { createClient } from "@/utils/supabase/server"
 
 // Tipe data yang dibutuhkan oleh fungsi ini
@@ -46,17 +47,14 @@ export async function createOrder(data: CreateOrderInput) {
 
         // --- INTEGRASI MIDTRANS ---
         // 1. Panggil server Midtrans (menggunakan Library Resmi mereka)
-        // Note: Gunakan require karena midtrans-client tidak memiliki tipe TypeScript bawaan
-        const midtransClient = require('midtrans-client');
-        
-        let snap = new midtransClient.Snap({
+        const snap = new midtransClient.Snap({
             isProduction: false,
-            serverKey: process.env.MIDTRANS_SERVER_KEY, // <--- JANGAN DITUKAR, INI HARUS SERVER KEY
-            clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY // <--- INI HARUS CLIENT KEY
+            serverKey: process.env.MIDTRANS_SERVER_KEY as string, // <--- as string agar TypeScript tidak protes
+            clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY as string // <--- as string agar TypeScript tidak protes
         });
 
         // 2. Susun data pesanan (Struk) yang mau kita tagihkan ke pelanggan
-        let parameter = {
+        const parameter = {
             "transaction_details": {
                 "order_id": order.id, // WAJIB: ID pesanan asli dari database kita
                 "gross_amount": order.totalAmount // WAJIB: Total yang harus dibayar
@@ -67,7 +65,8 @@ export async function createOrder(data: CreateOrderInput) {
         };
 
         // 3. Minta Token Pembayaran ke Midtrans
-        const snapToken = await snap.createTransactionToken(parameter);
+        const transaction = await snap.createTransaction(parameter);
+        const snapToken = transaction.token;
 
         // Jika berhasil, kembalikan sinyal sukses BESERTA TOKEN PEMBAYARANNYA
         return { success: true, order, token: snapToken }

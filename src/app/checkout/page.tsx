@@ -29,7 +29,7 @@ export default function CheckoutPage() {
         fetchProfile()
 
         // 🚨 SUNTIKAN SCRIPT MIDTRANS
-        const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js"
+        const snapScript = process.env.NEXT_PUBLIC_SNAP_URL as string
         const clientKey = process.env.NEXT_PUBLIC_CLIENT_KEY || ""
 
         const script = document.createElement("script")
@@ -86,7 +86,7 @@ export default function CheckoutPage() {
 
         // 3. Tangani hasil responsenya dan tampilkan Pop-up kasir midtrans jika berhasil
         if (result.success && result.token) {
-            // @ts-ignore (abaikan error TS karena 'snap' disuntik dari luar)
+            // @ts-expect-error (abaikan error TS karena 'snap' disuntik dari luar)
             window.snap.pay(result.token, {
                 onSuccess: function() {
                     alert("Pembayaran Berhasil! Makananmu segera dimasak.")
