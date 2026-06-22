@@ -1,10 +1,24 @@
 import prisma from "@/lib/prisma";
 import RealtimeOrderListener from "@/components/RealtimeOrderListener";
+import CompleteOrderButton from "@/components/CompleteOrderButton";
+import { OrderStatus } from "@prisma/client";
+import Link from "next/link";
 
 // Halaman ini adalah Server Component, jadi kita bisa langsung memanggil database
-export default async function KitchenPage() {
+export default async function KitchenPage({ searchParams }: { searchParams: Promise<{ filter?: string }> }) {
+
+    // Karena di Next.js 15 searchParams adalah Promise, kita harus await
+    const resolvedParams = await searchParams;
+    const currentFilter = resolvedParams.filter || 'ALL'
+
+    // Buat Kriteria pencarian database berdasarkan filter
+    const whereCondition = currentFilter === 'ALL'
+            ? {} // ambil semua
+            : { status: currentFilter as OrderStatus }  // Ambil sesuai filter
+
     // 1. Mengambil data pesanan beserta isinya dari Database
     const orders = await prisma.order.findMany({
+        where: whereCondition,
         orderBy: { createdAt: 'desc' }, // Tampilkan yang terbaru di atas
         include: {
             items: {
@@ -15,6 +29,19 @@ export default async function KitchenPage() {
         }
     })
 
+    // Komponen kecil untuk membuat tombol Tab Navigasi
+    const FilterTab = ({ label, value }: { label: string, value: string }) => {
+        const isActive = currentFilter === value
+        return (
+            <Link
+                href={value === 'ALL' ? '/kitchen' : `/kitchen?filter=${value}`}
+                className={`px-6 py-2 rounded-full font-bold transition-all ${isActive ? 'bg-yellow-500 text-black shadow-lg scale-105' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                }`}>
+                {label}
+            </Link>
+        )
+    }
+
     return (
         <main className="min-h-screen bg-gray-900 text-white p-8">
             <RealtimeOrderListener />
@@ -22,6 +49,16 @@ export default async function KitchenPage() {
                 <h1 className="text-4xl font-black text-yellow-400 mb-8 border-b border-gray-700 pb-4 tracking-widest">
                 👨‍🍳 KITCHEN DISPLAY
                 </h1>
+
+
+                {/* Barisan Tab Filter */}
+                <div className="flex flex-wrap gap-4 mb-8">
+                    <FilterTab label="SEMUA" value="ALL" />
+                    <FilterTab label="PENDING" value="PENDING" />
+                    <FilterTab label="COOKING" value="COOKING" />
+                    <FilterTab label="READY" value="READY" />
+                    <FilterTab label="COMPLETED" value="COMPLETED" />
+                </div>
 
                 {orders.length === 0 ? (
                     <div className="text-center text-gray-500 mt-20 text-2xl font-semibold">
@@ -62,9 +99,7 @@ export default async function KitchenPage() {
                                     <span className="text-gray-400 font-mono">
                                         {new Date(order.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                                     </span>
-                                    <button className="bg-green-600 hover:bg-green-500 text-white px-6 py-2.5 rounded-xl font-black transition-colors shadow-md active:scale-95">
-                                        Selesai
-                                    </button>
+                                    <CompleteOrderButton orderId={order.id} currentStatus={order.status} />
                                 </div>
                             </div>
                         ))}
