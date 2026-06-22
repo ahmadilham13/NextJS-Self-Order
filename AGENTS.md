@@ -93,6 +93,6 @@ Fitur manajerial tingkat lanjut untuk mengontrol keseluruhan sistem dari balik l
 - [x] Langkah 2: **User Management** (Melihat daftar pengguna, mengubah *role* menjadi Admin/Kitchen, dll).
 
 ### [ ] DAY 12 — Analytics & Recon (Rekonsiliasi)
-- [ ] Langkah 1: **Dashboard Analytic** (Grafik pendapatan, menu paling laris, total pesanan).
+- [x] Langkah 1: **Dashboard Analytic** (Grafik pendapatan, menu paling laris, total pesanan).
 - [ ] Langkah 2: **Halaman Rekonsiliasi** (Mencocokkan jumlah uang masuk di Midtrans dengan catatan database kita).
 - [ ] Langkah 3: **Halaman Audit Log** (Memantau siapa melakukan apa: misal "Admin B mengubah harga Ayam Goreng").
