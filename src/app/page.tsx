@@ -36,29 +36,39 @@ export default async function Home() {
         {/* Grid Kartu Makanan */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {menus.map((menu) => (
-            <div key={menu.id} className="group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
+            <div key={menu.id} className={`group bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 flex flex-col h-full ${menu.isAvailable ? 'hover:shadow-2xl hover:-translate-y-1' : 'opacity-75 grayscale'}`}>
               {/* Gambar Menu (Dengan efek zoom) */}
               <div className="relative h-48 w-full overflow-hidden bg-gray-200">
                 {menu.imageUrl ? (
                   <img 
                     src={menu.imageUrl}
                     alt={menu.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className={`w-full h-full object-cover transition-transform duration-500 ${menu.isAvailable && 'group-hover:scale-110'}`}
                   />
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-gray-400">
                     No Image
                   </div>
                 )}
+                
                 {/* Lencana Harga Melayang */}
                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-900 font-extrabold px-3 py-1 rounded-full shadow-sm text-sm">
                   Rp {menu.price.toLocaleString('id-ID')}
                 </div>
+
+                {/* Overlay HABIS */}
+                {!menu.isAvailable && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <span className="bg-red-600 text-white font-black px-6 py-2 rounded-lg text-2xl tracking-widest transform -rotate-12 border-4 border-white shadow-2xl">
+                            HABIS
+                        </span>
+                    </div>
+                )}
               </div>
 
               {/* Detail Menu */}
               <div className="p-6 flex flex-col grow">
-                <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                <h3 className={`text-xl font-bold mb-2 transition-colors ${menu.isAvailable ? 'text-gray-800 group-hover:text-blue-600' : 'text-gray-500'}`}>
                   {menu.name}
                 </h3>
                 <p className="text-sm text-gray-500 mb-6 line-clamp-3 grow">
@@ -67,11 +77,17 @@ export default async function Home() {
 
                 {/* Tombol Tambah di bagian paling bawah kartu */}
                 <div className="mt-auto pt-4 border-t border-gray-100">
-                  <AddToCartButton
-                    menuId={menu.id}
-                    name={menu.name}
-                    price={menu.price}
-                  />
+                  {menu.isAvailable ? (
+                    <AddToCartButton
+                      menuId={menu.id}
+                      name={menu.name}
+                      price={menu.price}
+                    />
+                  ) : (
+                    <button disabled className="w-full bg-gray-300 text-gray-500 font-bold py-2 px-4 rounded-xl cursor-not-allowed">
+                      Habis Terjual
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -88,9 +88,9 @@ Fitur manajerial tingkat lanjut untuk mengontrol keseluruhan sistem dari balik l
 - [x] Langkah 2: Memperbarui tabel `Menu` dengan menambahkan kolom `isAvailable` (Stok Tersedia).
 - [x] Langkah 3: Menyiapkan *Layout* khusus `/admin` yang dilindungi dengan *Role Based Access Control* (hanya Admin).
 
-### [ ] DAY 11 — Core Management (CRUD)
-- [ ] Langkah 1: **Menu Management** (Menambah, Mengedit harga/ketersediaan, Menghapus menu).
-- [ ] Langkah 2: **User Management** (Melihat daftar pengguna, mengubah *role* menjadi Admin/Kitchen, dll).
+### [x] DAY 11 — Core Management (CRUD)
+- [x] Langkah 1: **Menu Management** (Menambah, Mengedit harga/ketersediaan, Menghapus menu).
+- [x] Langkah 2: **User Management** (Melihat daftar pengguna, mengubah *role* menjadi Admin/Kitchen, dll).
 
 ### [ ] DAY 12 — Analytics & Recon (Rekonsiliasi)
 - [ ] Langkah 1: **Dashboard Analytic** (Grafik pendapatan, menu paling laris, total pesanan).
