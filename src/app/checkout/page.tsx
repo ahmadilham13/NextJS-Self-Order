@@ -4,13 +4,30 @@ import { useState } from "react"
 import { useCart } from "@/context/CartContext"
 import { useRouter } from "next/navigation"
 import { createOrder } from "@/actions/order"
+import { useEffect } from "react"
+import { getMyProfile } from "@/actions/auth"
 
 export default function CheckoutPage() {
     const { items, subtotal, clearCart } = useCart()
     const [isSubmitting, SetIsSubmitting] = useState(false)
     const router = useRouter()
-    // State untuk menyimpan nama yang diketik pelanggan
     const [customerName, setCustomerName] = useState("")
+    const [isMember, setIsMember] = useState(false) // <--- STATE BARU UNTUK DISKON
+
+    // Rumus Matematika Diskon (10% untuk Member)
+    const discount = isMember ? Math.floor(subtotal * 0.1) : 0
+    const finalTotal = subtotal - discount
+
+    useEffect(() => {
+        async function fetchProfile() {
+            const profile = await getMyProfile()
+            if (profile && profile.name) {
+                setCustomerName(profile.name) // Isi otomatis! 
+                setIsMember(true) // <--- TANDAI SEBAGAI MEMBER
+            }
+        }
+        fetchProfile()
+    }, [])
 
     // Jika iseng buka /checkout tapi keranjang kosong, paksa kembali
     if (items.length === 0) {
@@ -39,19 +56,17 @@ export default function CheckoutPage() {
         }
         
         SetIsSubmitting(true)
-        // 1. Susun data sesuai format yang diminta fungsi createoder
-        const orderData = {
-            customerName,
-            totalAmount: subtotal,
+        // 2. Kirim data ke Backend Server Action
+        const result = await createOrder({
+            customerName: customerName,
+            totalAmount: finalTotal, // <--- GUNAKAN HARGA SETELAH DISKON
+            discount: discount, // <--- INI DIA! MENGIRIM NOMINAL DISKON KE DATABASE
             items: items.map(item => ({
                 menuId: item.id,
                 quantity: item.quantity,
                 price: item.price
             }))
-        }
-
-        // 2. Panggil Server Action! (ajaibnya ini langsung mengeksekusi fungsi backendnya)
-        const result = await createOrder(orderData)
+        })
 
         SetIsSubmitting(false)
 
@@ -91,9 +106,25 @@ export default function CheckoutPage() {
                         ))}
                     </div>
                     
-                    <div className="flex justify-between items-center mt-6 pt-6 border-t-2 border-gray-200">
-                        <h3 className="text-xl font-bold text-gray-500">Total Pembayaran</h3>
-                        <h3 className="text-3xl font-black text-green-600">Rp {subtotal.toLocaleString('id-ID')}</h3>
+                    <div className="mt-6 pt-6 border-t-2 border-gray-200">
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-bold text-gray-500">Subtotal</h3>
+                            <h3 className="text-lg font-bold text-gray-500">Rp {subtotal.toLocaleString('id-ID')}</h3>
+                        </div>
+                        
+                        {isMember && (
+                            <div className="flex justify-between items-center mb-4 text-green-600 bg-green-50 p-3 rounded-xl border border-green-200">
+                                <h3 className="font-bold flex items-center gap-2">
+                                    <span>🌟</span> Diskon Member (10%)
+                                </h3>
+                                <h3 className="font-black">- Rp {discount.toLocaleString('id-ID')}</h3>
+                            </div>
+                        )}
+
+                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+                            <h3 className="text-xl font-bold text-gray-800">Total Pembayaran</h3>
+                            <h3 className="text-3xl font-black text-blue-600">Rp {finalTotal.toLocaleString('id-ID')}</h3>
+                        </div>
                     </div>
                 </div>
                 {/* Form Data Pelanggan */}

@@ -46,7 +46,8 @@ model Menu {
 model Order {
   id            String      @id @default(cuid())
   customerName  String      // Nama pembeli
-  totalAmount   Int         // Total tagihan
+  totalAmount   Int         // Total tagihan akhir (setelah diskon)
+  discount      Int         @default(0) // Nominal potongan harga
   status        OrderStatus @default(PENDING) // Status Awal
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

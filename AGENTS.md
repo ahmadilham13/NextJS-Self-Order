@@ -56,12 +56,12 @@ Pendekatan tetap menggunakan "Micro-Steps / Step-by-Step".
 - [x] Langkah 2: Membuat Halaman Register & Login.
 - [x] Langkah 3: Mengelola Sesi Pengguna di Frontend (Menampilkan Status Login).
 
-### [ ] DAY 6 — Guest Mode & Member Benefits
-- [ ] *[Sedang Berjalan]* Langkah 1: Memperbarui logika Checkout (Menggabungkan alur Tamu dan Pengguna Terdaftar).
-- [ ] Langkah 2: Sistem Diskon Otomatis untuk Member Terdaftar.
+### [x] DAY 6 — Guest Mode & Member Benefits
+- [x] Langkah 1: Memperbarui logika Checkout (Menggabungkan alur Tamu dan Pengguna Terdaftar).
+- [x] Langkah 2: Sistem Diskon Otomatis untuk Member Terdaftar.
 
 ### [ ] DAY 7 — Authorization (Role-Based Access)
-- [ ] Langkah 1: Menambahkan sistem `Role` (Customer, Kitchen, Admin).
+- [ ] *[Sedang Berjalan]* Langkah 1: Menambahkan sistem `Role` (Customer, Kitchen, Admin).
 - [ ] Langkah 2: Mengamankan halaman `/kitchen` (Hanya akun staf yang bisa mengakses layar dapur).
 
 ### [ ] DAY 8 — Payment Gateway Integration (Midtrans)

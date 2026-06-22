@@ -54,3 +54,18 @@ export async function signup(formData: FormData) {
   
   redirect('/auth?success=Berhasil mendaftar! Silakan Login.')
 }
+
+// Mengambil data profil user yang sedang login
+export async function getMyProfile() {
+  const supabase = await createClient()
+  const { data: authData } = await supabase.auth.getUser()
+
+  if (!authData.user) return null // jika tamu, kembalikan null
+
+  // Cari data lengkapnya di Prisma
+  const user = await prisma.user.findUnique({
+    where: { id: authData.user.id }
+  })
+
+  return user;
+}
