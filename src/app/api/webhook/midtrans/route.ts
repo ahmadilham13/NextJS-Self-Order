@@ -41,9 +41,14 @@ export async function POST(req: Request) {
 
 // Fungsi pembantu untuk merubah status di Database
 async function updateOrderStatus(orderId: string, newStatus: OrderStatus) {
-    await prisma.order.update({
-        where: { id: orderId },
-        data: { status: newStatus }
-    })
-    console.log(`[Database] Status Order ${orderId} dirubah menjadi ${newStatus}`)
+    try {
+        await prisma.order.update({
+            where: { id: orderId },
+            data: { status: newStatus }
+        })
+        console.log(`[Database] Status Order ${orderId} dirubah menjadi ${newStatus}`)
+    } catch (error) {
+        // Jika orderId tidak ditemukan (misal: notifikasi test dari dashboard Midtrans)
+        console.warn(`[Peringatan] Gagal merubah status Order ${orderId}. Mungkin ID tidak ada di database kita.`)
+    }
 }
