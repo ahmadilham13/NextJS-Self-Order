@@ -98,6 +98,7 @@ export async function deleteMenu(menuId: string) {
         revalidatePath('/admin/menu')
         revalidatePath('/')
         return { success: true }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         // P2003 adalah kode error Prisma untuk Foreign Key Constraint Violation
         if (error.code === 'P2003') {
@@ -111,7 +112,8 @@ export async function deleteMenu(menuId: string) {
 // 5. UPLOAD GAMBAR KE SUPABASE STORAGE
 // ----------------------------------------------------
 export async function uploadMenuImage(formData: FormData) {
-    const admin = await requireAdmin()
+    // Panggil saja fungsi ini untuk memastikan dia Admin, tak perlu disimpan ke variabel
+    await requireAdmin()
     
     const file = formData.get('file') as File
     if (!file) return { success: false, error: "File gambar tidak ditemukan" }
@@ -122,7 +124,7 @@ export async function uploadMenuImage(formData: FormData) {
     const uniqueFileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`
 
     // 1. Upload ke Storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
         .from('menu-images')
         .upload(uniqueFileName, file, {
             cacheControl: '3600',
