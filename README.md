@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistem Self-Order F&B 🍔
 
-## Getting Started
+Proyek portofolio membangun sistem pemesanan makanan mandiri dengan *Realtime Kitchen Display* menggunakan teknologi modern.
 
-First, run the development server:
+## 🚀 Tech Stack
+- **Framework:** Next.js 15 (App Router)
+- **Styling:** Tailwind CSS v4
+- **Database:** Supabase (PostgreSQL)
+- **ORM:** Prisma 7 (dengan Driver Adapter `pg`)
+- **TypeScript:** Digunakan di seluruh proyek
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 📝 Dokumentasi Setup Prisma 7 & Supabase (DAY 1)
+
+Berikut adalah panduan langkah demi langkah bagaimana kita mengkonfigurasi Prisma dan Supabase di proyek ini.
+
+### 1. Persiapan Database (Supabase)
+1. Buat project baru di [Supabase](https://supabase.com/).
+2. Masuk ke **Project Settings -> Database**.
+3. Di bagian **Connection String (URI)**, salin URL database.
+4. Buat file `.env` di *root* proyek dan tambahkan dua jenis URL (Pooler dan Direct):
+
+```env
+# URL Pooler (port 6543) - Digunakan oleh aplikasi untuk koneksi cepat
+DATABASE_URL="postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# URL Direct (port 5432) - Digunakan HANYA oleh Prisma CLI untuk migrasi tabel
+DIRECT_URL="postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Setup Prisma 7
+Karena menggunakan Prisma versi 7, konfigurasi terbagi menjadi dua bagian:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**A. Skema Database (`prisma/schema.prisma`)**
+Definisikan tabel di sini tanpa memasukkan URL koneksi.
+```prisma
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+datasource db {
+  provider = "postgresql"
+  // URL TIDAK ditaruh di sini pada Prisma 7
+}
 
-## Learn More
+model Menu {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Int
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+**B. Konfigurasi CLI (`prisma.config.ts`)**
+File ini mengatur koneksi khusus untuk keperluan perintah di terminal (seperti `db push` atau `seed`).
+```typescript
+import "dotenv/config";
+import { defineConfig } from "prisma/config";
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+    seed: "npx tsx prisma/seed.ts",
+  },
+  datasource: {
+    url: process.env["DIRECT_URL"], // WAJIB menunjuk ke DIRECT_URL untuk migrasi
+  },
+});
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3. Migrasi & Seeding Data
+Setelah skema dibuat, sinkronkan ke Supabase dan isi dengan data dummy:
 
-## Deploy on Vercel
+```bash
+# Mengirim struktur tabel ke Supabase
+npx prisma db push
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Men-generate Prisma Client untuk TypeScript
+npx prisma generate
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Memasukkan data awal (Menu F&B)
+npx prisma db seed
+```
+
+### 4. Koneksi Aplikasi ke Database (`src/lib/prisma.ts`)
+Aplikasi Next.js menggunakan *Adapter PG* untuk terkoneksi lewat *Connection Pooler* agar aman di lingkungan Serverless/Hot-reload.
+
+```typescript
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+const prismaClientSingleton = () => new PrismaClient({ adapter });
+
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
+
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+export default prisma;
+
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
+```
+
+## 🏃‍♂️ Cara Menjalankan Proyek Lokal
+Jalankan server *development*:
+```bash
+npm run dev
+```
+Buka [http://localhost:3000](http://localhost:3000) di browser untuk melihat hasilnya.
