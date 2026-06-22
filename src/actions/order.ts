@@ -44,8 +44,33 @@ export async function createOrder(data: CreateOrderInput) {
             }
         })
 
-        // Jika berhasil, kembalikan sinyal sukses
-        return { success: true, order }
+        // --- INTEGRASI MIDTRANS ---
+        // 1. Panggil server Midtrans (menggunakan Library Resmi mereka)
+        // Note: Gunakan require karena midtrans-client tidak memiliki tipe TypeScript bawaan
+        const midtransClient = require('midtrans-client');
+        
+        let snap = new midtransClient.Snap({
+            isProduction: false,
+            serverKey: process.env.MIDTRANS_SERVER_KEY, // <--- JANGAN DITUKAR, INI HARUS SERVER KEY
+            clientKey: process.env.NEXT_PUBLIC_CLIENT_KEY // <--- INI HARUS CLIENT KEY
+        });
+
+        // 2. Susun data pesanan (Struk) yang mau kita tagihkan ke pelanggan
+        let parameter = {
+            "transaction_details": {
+                "order_id": order.id, // WAJIB: ID pesanan asli dari database kita
+                "gross_amount": order.totalAmount // WAJIB: Total yang harus dibayar
+            },
+            "customer_details": {
+                "first_name": order.customerName,
+            }
+        };
+
+        // 3. Minta Token Pembayaran ke Midtrans
+        const snapToken = await snap.createTransactionToken(parameter);
+
+        // Jika berhasil, kembalikan sinyal sukses BESERTA TOKEN PEMBAYARANNYA
+        return { success: true, order, token: snapToken }
     } catch (error) {
         console.error("Gagal membuat pesanan: ", error)
         return { success: false, error: "Waduh, terjadi kesalahan saat memproses pesanan." }

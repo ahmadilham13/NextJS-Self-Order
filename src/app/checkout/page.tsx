@@ -27,6 +27,20 @@ export default function CheckoutPage() {
             }
         }
         fetchProfile()
+
+        // 🚨 SUNTIKAN SCRIPT MIDTRANS
+        const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js"
+        const clientKey = process.env.NEXT_PUBLIC_CLIENT_KEY || ""
+
+        const script = document.createElement("script")
+        script.src = snapScript
+        script.setAttribute("data-client-key", clientKey)
+        script.async = true
+        document.body.appendChild(script)
+
+        return () => {
+            document.body.removeChild(script)   // Bersihkan script saat pindah halaman
+        }
     }, [])
 
     // Jika iseng buka /checkout tapi keranjang kosong, paksa kembali
@@ -70,11 +84,26 @@ export default function CheckoutPage() {
 
         SetIsSubmitting(false)
 
-        // 3. Tangani hasil responsenya
-        if (result.success) {
-            alert("Yeay! Pesanan berhasil masuk ke dapur! 🍳")
-            clearCart()
-            router.push('/')
+        // 3. Tangani hasil responsenya dan tampilkan Pop-up kasir midtrans jika berhasil
+        if (result.success && result.token) {
+            // @ts-ignore (abaikan error TS karena 'snap' disuntik dari luar)
+            window.snap.pay(result.token, {
+                onSuccess: function() {
+                    alert("Pembayaran Berhasil! Makananmu segera dimasak.")
+
+                    clearCart()
+                    router.push('/')
+                },
+                onPending: function() {
+                    alert("Menunggu pembayaran... Silakan selesaikan di ATM/Aplikasi.")
+                },
+                onError: function() {
+                    alert("Pembayaran gagal, Silakan coba lagi.")
+                },
+                onClose: function() {
+                    alert("Kamu menutup layar kasir sebelum menyelesaikan pembayaran")
+                }
+            })
         } else {
             alert(result.error)
         }

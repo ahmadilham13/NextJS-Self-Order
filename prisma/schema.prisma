@@ -79,5 +79,6 @@ enum OrderStatus {
   PENDING       // Baru masuk
   COOKING       // Sedang dimasak
   READY         // Siap diantar/diambil
+  CANCELLED     // Batal dipesan
   COMPLETED     // Selesai
 }

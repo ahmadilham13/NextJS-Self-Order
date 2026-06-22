@@ -50,5 +50,10 @@ A modern, full-stack Food & Beverage Self-Order System built with Next.js 15. Fe
    ```
    Buka `http://localhost:3000` untuk layar Pelanggan/Kasir, dan `http://localhost:3000/kitchen` untuk layar Dapur.
 
+6. Jalankan command ini untuk melihat database via Prisma GUI:
+   ```bash
+   npx prisma studio
+   ```
+
 ## 🤝 Kontribusi
 Dibuat sebagai proyek pembelajaran mandiri (Micro-Steps Project). Silakan lakukan *fork* dan modifikasi sesukamu!
