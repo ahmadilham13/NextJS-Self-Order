@@ -1,118 +1,54 @@
-# Sistem Self-Order F&B 🍔
+# 🍔 Smart Resto POS & Self-Order System
 
-Proyek portofolio membangun sistem pemesanan makanan mandiri dengan *Realtime Kitchen Display* menggunakan teknologi modern.
+A modern, full-stack Food & Beverage Self-Order System built with Next.js 15. Features a customer-facing kiosk interface and a real-time kitchen display system (KDS) synchronized via WebSockets.
 
-## 🚀 Tech Stack
-- **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS v4
-- **Database:** Supabase (PostgreSQL)
-- **ORM:** Prisma 7 (dengan Driver Adapter `pg`)
-- **TypeScript:** Digunakan di seluruh proyek
+## ✨ Fitur Utama
+- **Menu Digital & Keranjang**: Tampilan beranda yang interaktif bagi pelanggan untuk memilih makanan dan memasukkannya ke keranjang (State Management dengan React Context).
+- **Sistem Checkout**: Pengisian data pelanggan dan perhitungan total harga secara otomatis.
+- **Realtime Kitchen Display**: Layar khusus dapur yang akan memunculkan pesanan baru seketika (tanpa perlu *refresh*) menggunakan Supabase WebSockets.
+- **Alur Status Pesanan**: Koki dapat mengubah status pesanan dari `PENDING` -> `COOKING` -> `READY` -> `COMPLETED`.
+- **Filter Pintar**: Navigasi di layar dapur untuk menyaring pesanan berdasarkan statusnya saat ini.
 
-## 📝 Dokumentasi Setup Prisma 7 & Supabase (DAY 1)
+## 🛠️ Teknologi yang Digunakan
+- **Framework**: Next.js 15 (App Router, Server Actions)
+- **Styling**: Tailwind CSS v4
+- **Database**: Supabase (PostgreSQL)
+- **ORM**: Prisma 7
+- **Realtime Sync**: `@supabase/supabase-js`
 
-Berikut adalah panduan langkah demi langkah bagaimana kita mengkonfigurasi Prisma dan Supabase di proyek ini.
+## 🚀 Cara Menjalankan di Komputer Lokal
 
-### 1. Persiapan Database (Supabase)
-1. Buat project baru di [Supabase](https://supabase.com/).
-2. Masuk ke **Project Settings -> Database**.
-3. Di bagian **Connection String (URI)**, salin URL database.
-4. Buat file `.env` di *root* proyek dan tambahkan dua jenis URL (Pooler dan Direct):
+1. Clone repositori ini:
+   ```bash
+   git clone https://github.com/username-kamu/nama-repo.git
+   cd nama-repo
+   ```
 
-```env
-# URL Pooler (port 6543) - Digunakan oleh aplikasi untuk koneksi cepat
-DATABASE_URL="postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true"
+2. Install semua dependensi:
+   ```bash
+   npm install
+   ```
 
-# URL Direct (port 5432) - Digunakan HANYA oleh Prisma CLI untuk migrasi tabel
-DIRECT_URL="postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
-```
+3. Buat file `.env` di folder utama dan isi dengan konfigurasi database Supabase-mu:
+   ```env
+   DATABASE_URL="postgresql://postgres.[PROYEK_ID]:[PASSWORD]@aws-0-....pooler.supabase.com:6543/postgres"
+   DIRECT_URL="postgresql://postgres.[PROYEK_ID]:[PASSWORD]@aws-0-....pooler.supabase.com:5432/postgres"
+   NEXT_PUBLIC_SUPABASE_URL="https://[PROYEK_ID].supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOi..."
+   ```
 
-### 2. Setup Prisma 7
-Karena menggunakan Prisma versi 7, konfigurasi terbagi menjadi dua bagian:
+4. Sinkronisasi skema database ke Supabase:
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
+   *(Opsional: Jalankan `npx tsx prisma/seed.ts` jika kamu punya script data awal)*
 
-**A. Skema Database (`prisma/schema.prisma`)**
-Definisikan tabel di sini tanpa memasukkan URL koneksi.
-```prisma
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
-}
+5. Jalankan server lokal:
+   ```bash
+   npm run dev
+   ```
+   Buka `http://localhost:3000` untuk layar Pelanggan/Kasir, dan `http://localhost:3000/kitchen` untuk layar Dapur.
 
-datasource db {
-  provider = "postgresql"
-  // URL TIDAK ditaruh di sini pada Prisma 7
-}
-
-model Menu {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  price       Int
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-```
-
-**B. Konfigurasi CLI (`prisma.config.ts`)**
-File ini mengatur koneksi khusus untuk keperluan perintah di terminal (seperti `db push` atau `seed`).
-```typescript
-import "dotenv/config";
-import { defineConfig } from "prisma/config";
-
-export default defineConfig({
-  schema: "prisma/schema.prisma",
-  migrations: {
-    path: "prisma/migrations",
-    seed: "npx tsx prisma/seed.ts",
-  },
-  datasource: {
-    url: process.env["DIRECT_URL"], // WAJIB menunjuk ke DIRECT_URL untuk migrasi
-  },
-});
-```
-
-### 3. Migrasi & Seeding Data
-Setelah skema dibuat, sinkronkan ke Supabase dan isi dengan data dummy:
-
-```bash
-# Mengirim struktur tabel ke Supabase
-npx prisma db push
-
-# Men-generate Prisma Client untuk TypeScript
-npx prisma generate
-
-# Memasukkan data awal (Menu F&B)
-npx prisma db seed
-```
-
-### 4. Koneksi Aplikasi ke Database (`src/lib/prisma.ts`)
-Aplikasi Next.js menggunakan *Adapter PG* untuk terkoneksi lewat *Connection Pooler* agar aman di lingkungan Serverless/Hot-reload.
-
-```typescript
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client';
-
-const connectionString = process.env.DATABASE_URL;
-const pool = new Pool({ connectionString });
-const adapter = new PrismaPg(pool);
-
-const prismaClientSingleton = () => new PrismaClient({ adapter });
-
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
-
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
-export default prisma;
-
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;
-```
-
-## 🏃‍♂️ Cara Menjalankan Proyek Lokal
-Jalankan server *development*:
-```bash
-npm run dev
-```
-Buka [http://localhost:3000](http://localhost:3000) di browser untuk melihat hasilnya.
+## 🤝 Kontribusi
+Dibuat sebagai proyek pembelajaran mandiri (Micro-Steps Project). Silakan lakukan *fork* dan modifikasi sesukamu!
