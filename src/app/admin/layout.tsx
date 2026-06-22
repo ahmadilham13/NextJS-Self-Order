@@ -36,6 +36,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <Link href="/admin/audit" className="block px-4 py-3 rounded-xl hover:bg-gray-800 font-bold transition-colors">
                         🕵️ Audit Log
                     </Link>
+                    <Link href="/admin/recon" className="block px-4 py-3 rounded-xl hover:bg-gray-800 font-bold transition-colors">
+                        💰 Rekonsiliasi
+                    </Link>
                 </nav>
 
                 {/* Profil Admin di Bawah Sidebar */}
